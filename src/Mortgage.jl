@@ -1,237 +1,9 @@
-# COMBAK: Add functionality to return mortgage schedule as a dataframe
-# COMBAK: Handle a Nominal(m :: Vector{<:Real}, p :: Currency). Use broadcasting
-# COMBAK: Add ==(c₁ :: Currency, c₂ :: Currency)
-# COMBAK: Add ==(m₁ :: Nominal, m₂ :: Nominal), update convert() documentation example
-# COMBAK: Add *(m :: Nominal, x :: Real) & *(x :: Real, m :: Nominal)
-# COMBAK: Add *(m :: Nominal, x :: Percent) & *(x :: Percent, m :: Nominal)
-# COMBAK: Add +(m :: Nominal, n :: Nominal), must check currencies match
 # COMBAK: Use Val() on format(Percent()) ?
-"""
-### Currency(p :: Symbol)
-### Currency(p :: Symbol, conversions :: Dict{Symbol, Real})
-Creates a Currency object
-
-`Currency(p, conversions)` can store user-defined convertion factors
-
-**arguments**
-- p :: Symbol; currency symbol
-- conversions :: Dict{Symbol, Real}; Currency conversion factors
-----------------
-### example
-```
-Currency(:£)
-Currency(:WON, Dict(:£ => 1, :WON => 1516.67))
-```
-"""
-struct Currency
-    p :: Symbol
-    conversions :: Dict{Symbol, <:Real}
-    function Currency(p :: Symbol)
-        conversions = Dict(p => 1)
-        Currency(p, conversions)
-    end
-    function Currency(p :: Symbol, conversions :: Dict{Symbol, <:Real})
-        if p ∉ keys(conversions) error("$p ∉ $(keys(conversions))") end
-        new(p, conversions)
-    end
-end
-export Currency
-
-"""
-### get_conversions(c :: Currency) :: Dict{Symbol, <:Real}
-Get currency conversion Dict from `c`
-
-**arguments**
-- c :: Currency
-----------------
-### example
-```
-c = Currency(:WON, Dict(:£ => 1, :WON => 1516.67))
-get_conversions(c)
-```
-"""
-get_conversions(c :: Currency) :: Dict{Symbol, <:Real} = c.conversions
-
-"""
-### convert(c :: Currency, to :: Symbol) :: Currency
-Convert the currency `c` into currency `to`
-
-Constraint: `to ∈ keys(get_conversions(c))`
-
-Conversion factors are maintained
-
-**arguments**
-- c :: Currency;
-- to :: Symbol;
-----------------
-### example
-```
-c = Currency(:WON, Dict(:£ => 1, :WON => 1516.67))
-convert(c, :£)
-```
-"""
-function convert(c :: Currency, to :: Symbol) :: Currency
-    con_Dict = get_conversions(c)
-    if to ∉ keys(con_Dict) error("$to ∉ $(keys(con_Dict))") end
-    Currency(to, con_Dict)
-end
-
-"""
-### Nominal(m :: Real, p :: Currency)
-Create a `Nominal` from `m` and `p`
-
-**arguments**
-- m :: Real; monetary value
-- p :: Currency; currency of monetary value
-----------------
-### example
-```
-Nominal(1000, Currency(:£))
-```
-"""
-struct Nominal
-    m :: Real
-    p :: Currency
-end
-
-"""
-### Nominal(m :: Real)
-Create a `Nominal` from `m`
-
-Default currency is `:£`
-
-**arguments**
-- m :: Real; monetary value
-----------------
-### example
-```
-Nominal(1000)
-```
-"""
-Nominal(m :: Real) = Nominal(m, Currency(:£))
-# Identity, useful for parsing arguments
-Nominal(m :: Nominal) = m
-export Nominal
-
-"""
-### format(currency :: Currency) :: Function
-Return a function that, when called, returns the integer component of a number, prepended by its currency, and comma deliminated
-
-The function returned will round down its `Real` input.
-    
-**arguments**
-- currency :: Currency;
-----------------
-### example
-```
-format_pound = format(Currency(:£))
-format_pound(2345603)
-format_pound(2345603.01)
-format_pound(2345603.06)
-```
-"""
-format(currency :: Currency) :: Function = x -> string(currency.p) * replace(string(Int(floor(x))), r"(?<=[0-9])(?=(?:[0-9]{3})+(?![0-9]))" => ",")
-
-"""
-### get_val(m :: Nominal) :: Real
-Get `Real` value from `m`
-
-**arguments**
-- m :: Nominal;
-----------------
-### example
-```
-m = Nominal(500000)
-get_val(m)
-```
-"""
-get_val(m :: Nominal) :: Real = m.m
-export get_val
-
-"""
-### get_currency(m :: Nominal) :: Currency
-Get currency object from `m`
-
-**arguments**
-- m :: Nominal;
-----------------
-### example
-```
-m = Nominal(500000)
-get_currency(m)
-```
-"""
-get_currency(m :: Nominal) :: Currency = m.p
-export get_currency
-
-"""
-### get_conversions(m :: Nominal) :: Dict{Symbol, <:Real}
-Get currency conversion Dict from `m`
-
-**arguments**
-- m :: Nominal
-----------------
-### example
-```
-c = Currency(:WON, Dict(:£ => 1, :WON => 1516.67))
-m = Nominal(500000, c)
-get_conversions(m)
-```
-"""
-get_conversions(m :: Nominal) :: Dict{Symbol, <:Real} = get_conversions(m.p)
-export get_conversions
-
-"""
-### convert(nom :: Nominal, to :: Currency) :: Nominal
-Convert the currency of `m` to `to`
-
-**arguments**
-- m :: Nominal;
-- to :: Currency;
-----------------
-### example
-```
-c = Currency(:£, Dict(:£ => 1, :WON => 1516.67))
-m_£ = Nominal(500000, c)
-m_WON = convert(m_£, :WON)
-get_val(convert(m_WON, :£)) == get_val(m_£)
-```
-"""
-convert(m :: Nominal, to :: Symbol) :: Nominal = Nominal(m.m / get_conversions(m.p)[m.p.p] * get_conversions(m.p)[to], convert(m.p, to))
-export convert
-
-"""
-### Percent(p :: Real, p_min :: Real = -10, p_max :: Real = 10)
-Create a `Percent` object
-
-Use `p_min` and `p_max` to enforce range boundaries
-
-**arguments**
-- p :: Real; Value of percent variable
-- p_min :: Real; Lower bound on acceptable values
-- p_max :: Real; Upper bound on acceptable values
-----------------
-### example
-```
-Percent(0.1)
-```
-"""
-struct Percent
-    p :: Real
-    # Choose to control the valid range
-    function Percent(p :: Real, p_min :: Real = -10, p_max :: Real = 10)
-        validate(:($p > $p_max), :p, :p_max)
-        validate(:($p < $p_min), :p, :p_min)
-        new(p)
-    end
-end
-
-Percent(p :: Percent) = p
-Percent() = Percent(0)
-
-format(percent :: Percent, digits = 2) = x -> string(round(x * 100, digits = digits)) * "%"
-export format
-
+# COMBAK: Add functionality to return mortgage schedule as a dataframe
+# COMBAK: Control print of nominal
+# COMBAK: Add stochastic simulation of house prices
+# COMBAK: Add rent. Mortgage is profitable when interest - lost investment income / term / d < rent - ΔHouse Price / term / d
+# ⇒ term * d * ( interest - rent ) < Lost Investment Income - ΔHouse Price + Fees
 struct Mortgage
     price :: Nominal
     deposit :: Percent
@@ -264,7 +36,7 @@ get_frequency(m :: Mortgage) = m.frequency
 get_frequency_num(m :: Mortgage) = Dict(:monthly => 12, :annually => 1)[get_frequency(m)]
 get_term(m :: Mortgage) = m.term
 get_stampduty(m :: Mortgage) = m.stampduty
-# Interest rate over 1/d time period
+# Interest rate over 1/d time unit
 get_rate(m :: Mortgage, d :: Real = 1) = (1 + m.rate.p) ^ (1 / d) - 1
 function payment(m :: Mortgage)
     d = get_frequency_num(m)
@@ -309,10 +81,10 @@ function cumulate(m :: Mortgage, metric :: Symbol, T :: Union{Real, Nothing} = n
         :interest_ratio => interest_payments ./ total_payments
         )[metric][index]
 end
-function tick_tuple(lims, n, func :: Function)
+function tick_tuple(lims, n, format_func :: Function)
     Δ = (lims[2] - lims[1]) / n
     yticks = lims[1]:Δ:lims[2]
-    yticklabels = func.(yticks)
+    yticklabels = format_func.(yticks)
     (yticks, yticklabels)
 end
 function plot(m :: Mortgage, xlims = :auto, ylims = :auto, nyticks = 6, title = "Mortgage Repayment Schedule", xlabel = "Time (Years)")
@@ -350,9 +122,3 @@ function simulate(m :: Mortgage, variable :: Symbol, values, filename, fps = 15,
     anim = @animate for mortgage ∈ mortgages plot(mortgage, xlims, ylims, nyticks, title, xlabel) end
     gif(anim, filename, fps = fps)
 end
-
-
-# Control print of nominal
-# Add stochastic simulation of house prices
-# Add rent. Mortgage is profitable when interest - lost investment income / term / d < rent - ΔHouse Price / term / d
-# ⇒ term * d * ( interest - rent ) < Lost Investment Income - ΔHouse Price + Fees
