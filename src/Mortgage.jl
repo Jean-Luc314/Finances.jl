@@ -6,18 +6,17 @@
 # ⇒ term * d * ( interest - rent ) < Lost Investment Income - ΔHouse Price + Fees
 struct Mortgage
     price :: Nominal
-    deposit :: Percent
-    rate :: Percent
+    deposit :: Real
+    rate :: Real
     term :: Real
     frequency :: Symbol
     stampduty :: Bool
     function Mortgage(price, deposit, rate, term, frequency = :monthly, stampduty = true)
         # Parse Types
         price = Nominal(price)
-        deposit = Percent(deposit)
-        rate = Percent(rate)
         # Validate ranges
-        validate(:($(price.m) < 0), :price)
+        validate(:($deposit < 0), :deposit)
+        validate(:($(get_val(price)) < 0), :price)
         validate(:($term < 0), :term)
         valid_freqs = [:monthly, :annually]
         if frequency ∉ valid_freqs error("$frequency ∉ $valid_freqs") end
@@ -100,12 +99,12 @@ function plot(m :: Mortgage, xlims = :auto, ylims = :auto, nyticks = 6, title = 
     yticks!(tick_tuple(ylims, nyticks, format(get_currency(m))))
     # Additional features
     plot!(legend = :topleft)
-    format_percent = format(Percent())
+    format_percent = format("", "%", 2, 100, "")
     title!(title * "\nrate = " * format_percent(get_rate(m)) * ", deposit = " * format_percent(get_deposit(m)))
     xlabel!(xlabel)
     p
 end
-function simulate(m :: Mortgage, variable :: Symbol, values, filename, fps = 15, xlims = :auto, ylims = :auto, nyticks = 6, title = "Mortgage Repayment Schedule", xlabel = "Time (Years)")
+function animate(m :: Mortgage, variable :: Symbol, values, filename, fps = 15, xlims = :auto, ylims = :auto, nyticks = 6, title = "Mortgage Repayment Schedule", xlabel = "Time (Years)")
     valid_vars = [:price, :deposit, :rate, :term]
     if variable ∉ valid_vars error("$variable ∉ $valid_vars") end
     mortgages = Dict(

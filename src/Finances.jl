@@ -5,7 +5,7 @@ import Plots: plot
 
 include("validate.jl")
 include("Nominal.jl")
-include("Percent.jl")
+include("format.jl")
 include("Mortgage.jl")
 
 end # Module

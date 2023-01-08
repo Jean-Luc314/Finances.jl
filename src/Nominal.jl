@@ -36,6 +36,21 @@ end
 export Currency
 
 """
+### get_cur(c :: Currency) :: Symbol
+Get currency Symbol from `c`
+
+**arguments**
+- c :: Currency
+----------------
+### example
+```
+c = Currency(:WON, Dict(:£ => 1, :WON => 1516.67))
+get_cur(c)
+```
+"""
+get_cur(c :: Currency) :: Symbol = c.p
+
+"""
 ### get_conversions(c :: Currency) :: Dict{Symbol, <:Real}
 Get currency conversion Dict from `c`
 
