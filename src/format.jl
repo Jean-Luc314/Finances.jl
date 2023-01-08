@@ -11,6 +11,4 @@ function format(c :: Currency, digits = 2, delim = ",", prepend_cur :: Bool = tr
         format("", cur, digits, 1, delim)
     end
 end
-format("", "%", 0, 100, "")(2.454)
-format(Currency(:£))(346568985.65)
 export format
