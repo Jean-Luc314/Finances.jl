@@ -1,5 +1,8 @@
 module Finances
 
-# Write your package code here.
+using Plots
+import Plots: plot
 
-end
+include("Mortgage.jl")
+
+end # Module
