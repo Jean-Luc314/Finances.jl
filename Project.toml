@@ -1,0 +1,13 @@
+name = "Finances"
+uuid = "c262ebdf-3764-4500-aea5-bfc45f5a6cf3"
+authors = ["Jean-Luc Parker"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
