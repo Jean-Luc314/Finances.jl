@@ -127,25 +127,6 @@ Nominal(m :: Nominal) = m
 export Nominal
 
 """
-### format(currency :: Currency) :: Function
-Return a function that, when called, returns the integer component of a number, prepended by its currency, and comma deliminated
-
-The function returned will round down its `Real` input.
-    
-**arguments**
-- currency :: Currency;
-----------------
-### example
-```
-format_pound = format(Currency(:£))
-format_pound(2345603)
-format_pound(2345603.01)
-format_pound(2345603.06)
-```
-"""
-format(currency :: Currency) :: Function = x -> string(currency.p) * replace(string(Int(floor(x))), r"(?<=[0-9])(?=(?:[0-9]{3})+(?![0-9]))" => ",")
-
-"""
 ### get_val(m :: Nominal) :: Real
 Get `Real` value from `m`
 
