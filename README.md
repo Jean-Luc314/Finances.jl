@@ -8,7 +8,7 @@ This small package offers the following Financial objects:
 | Nominal   |   An object to describe value and currency, with securely defined exchange rates. Methods exist to manipulate e.g., convert between currencies  |
 | Currency  |   Define valid currencies and exchange rates                                                                                                    |
 
-Curently, the package allows the user to project and visualise their Mortgage Loan Repayments.
+Currently, the package allows the user to project and visualise their Mortgage Loan Repayments.
 
 `cashflow()` operates on a `Mortgage` object to perform the cashflow projection. The time, loan outstanding, cumulative interest, and payments-to-date, will be returned for the user.
 
