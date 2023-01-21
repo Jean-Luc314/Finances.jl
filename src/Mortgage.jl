@@ -414,8 +414,9 @@ The animation combine plots of:
 ----------------
 ### example
 ```
-m = Mortgage(150000, 0.1, 0.0597, 25)
-animate(m :: Mortgage, :price, 100000:5000:500000)
+m = Mortgage(500000, 0.1, 0.0597, 25)
+animate(m :: Mortgage, :rate, (3.5 .+ 2.5 * sin.(range(-π, stop = π, length = 100))) ./ 100, "Mortgage against rate.gif")
+animate(m :: Mortgage, :term, (17.5 .+ 12.5 * sin.(range(-π, stop = π, length = 200))), "Mortgage against Term.gif")
 ```
 """
 function animate(m :: Mortgage, variable :: Symbol, values, filename, fps = 15, xlims = :auto, ylims = :auto, nyticks = 6, title = "Mortgage Repayment Schedule", xlabel = "Time (Years)")
