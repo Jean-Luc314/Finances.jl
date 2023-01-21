@@ -414,9 +414,10 @@ The animation combine plots of:
 ----------------
 ### example
 ```
+sinusoid = (1 .+ sin.(range(-π / 2, stop = 3π / 2, length = 150))) ./ 2
 m = Mortgage(500000, 0.1, 0.0597, 25)
-animate(m :: Mortgage, :rate, (3.5 .+ 2.5 * sin.(range(-π, stop = π, length = 100))) ./ 100, "Mortgage_against_rate.gif")
-animate(m :: Mortgage, :term, (17.5 .+ 12.5 * sin.(range(-π, stop = π, length = 200))), "Mortgage_against_Term.gif")
+animate(m, :rate, (1 .+ 5 .* sinusoid) ./ 100, "ExampleAnimations/Mortgage_against_rate.gif")
+animate(m, :term, 5 .+ 20 .* sinusoid, "ExampleAnimations/Mortgage_against_Term.gif")
 ```
 """
 function animate(m :: Mortgage, variable :: Symbol, values, filename, fps = 15, xlims = :auto, ylims = :auto, nyticks = 6, title = "Mortgage Repayment Schedule", xlabel = "Time (Years)")
