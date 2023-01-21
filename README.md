@@ -20,6 +20,6 @@ animate(m, :rate, (1 .+ 5 .* sinusoid) ./ 100, "ExampleAnimations/Mortgage_again
 animate(m, :term, 5 .+ 20 .* sinusoid, "ExampleAnimations/Mortgage_against_Term.gif")
 ```
 
-![Animation of Mortgage against Term](https://raw.githubusercontent.com/Jean-Luc314/Finances.jl/main/ExampleAnimations/Mortgage_against_term.gif)
+![Animation of Mortgage against Term](https://raw.githubusercontent.com/Jean-Luc314/Finances.jl/main/ExampleAnimations/Mortgage_against_Term.gif)
 
 [![Build Status](https://github.com/Jean-Luc314/Finances.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Jean-Luc314/Finances.jl/actions/workflows/CI.yml?query=branch%3Amain)
