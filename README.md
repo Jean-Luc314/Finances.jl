@@ -2,11 +2,11 @@
 
 This small package offers the following Financial objects:
 
-| Object        |   Description                                                                                                                                    |
+| Object    |   Description                                                                                                                                    |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Mortgage**  |   Store the financial information that defines a Mortgage. Methods available include cashflow projection / visualision                           |
-| **Nominal**   |   An object to describe value and currency, with securely defined exchange rates. Methods exist to manipulate e.g., convert between currencies   |
-| **Currency**  |   Define valid currencies and exchange rates                                                                                                     |
+| Mortgage  |   Store the financial information that defines a Mortgage. Methods available include cashflow projection / visualision                           |
+| Nominal   |   An object to describe value and currency, with securely defined exchange rates. Methods exist to manipulate e.g., convert between currencies   |
+| Currency  |   Define valid currencies and exchange rates                                                                                                     |
 
 Currently, the package allows the user to project and visualise their Mortgage Loan Repayments.
 
