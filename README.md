@@ -1,6 +1,6 @@
 # Finances
 
-This small package offers the following objects:
+This small package offers the following Financial objects:
 
 | Object    |   Description                                                                                                                                   |
 |-----------|-------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -8,11 +8,13 @@ This small package offers the following objects:
 | Nominal   |   An object to describe value and currency, with securely defined exchange rates. Methods exist to manipulate e.g., convert between currencies  |
 | Currency  |   Define valid currencies and exchange rates                                                                                                    |
 
-`cashflow()` operates on a `Mortgage` object to project the cashflow repayments. The time, loan outstanding, cumulative interest, and payments-to-date, will be returned for the user.
+Curently, the package allows the user to project and visualise their Mortgage Loan Repayments.
 
-The `plot()` function from `Plots` is extended to operate on a `Mortgage` object.
+`cashflow()` operates on a `Mortgage` object to perform the cashflow projection. The time, loan outstanding, cumulative interest, and payments-to-date, will be returned for the user.
 
-Finally, `animate()` allows `plot()` to be called many times. Each iteration varies one of the `Mortgage` inputs, an `animate` object is returned with the side-effect of saving it as a .gif.
+The user can call the `plot()` function to visualise the repayments. `plot()` has been extended from `Plots` to operate on a `Mortgage` object.
+
+Finally, `animate()` allows `plot()` to be called many times. Each iteration varies one of the `Mortgage` inputs. Then, an `animate` object compresses the plots, which is returned. As a side-effect, `animate()` will save the animation as a .gif.
 
 ```julia
 sinusoid = (1 .+ sin.(range(-π / 2, stop = 3π / 2, length = 150))) ./ 2
