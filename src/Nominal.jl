@@ -193,3 +193,14 @@ get_val(convert(m_WON, :£)) == get_val(m_£)
 """
 convert(m :: Nominal, to :: Symbol) :: Nominal = Nominal(m.m / get_conversions(m.p)[m.p.p] * get_conversions(m.p)[to], convert(m.p, to))
 export convert
+
+"""
+### Pretty Printer for `Nominal` types
+
+## example
+```
+a = Nominal(100, Currency(:USD))
+```
+"""
+Base.show(io::IO, ::MIME"text/plain", nom::Nominal) = print(String(get_currency(nom).p) * string(get_val(nom)))
+
